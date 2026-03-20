@@ -90,13 +90,22 @@ int task_switch(struct task_t *task) {
 
 int task_id(struct task_t *task) {
     if (task == NULL) {
-        return current_task->id;
+        if (current_task)
+            return current_task->id;
+        else 
+            return ERROR;
     }
     return task->id;
 }
 
 char *task_name(struct task_t *task) {
     if (task == NULL) {
-        return current_id;
+        if (current_task && current_task->name)
+            return current_task->name;
+        else
+            return NULL;
+    } else if (task->name == NULL) {
+        return NULL;
     }
+    return task->name;
 }
