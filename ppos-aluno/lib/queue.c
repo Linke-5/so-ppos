@@ -1,3 +1,6 @@
+// GRR20242288 Eduardo Munaretto Majczak
+// GRR20242306 João Pedro Oliveira Lazari
+// GRR20206889 Daniel Henrique Vieira
 // PingPongOS - PingPong Operating System
 // Prof. Carlos A. Maziero, DINF UFPR
 // Versão 2.0 -- Junho de 2025
