@@ -25,7 +25,7 @@ void task_init() {
     struct task_t *kernel = mem_alloc(sizeof(struct task_t));
     kernel->name = "kernel";
     kernel->id = 0;
-    kernel->status = EXECUTING;
+    kernel->status = RODANDO;
     kernel->task_pai = NULL;
 
     current_task = kernel;
@@ -47,15 +47,17 @@ struct task_t *task_create(char *name, void (*entry)(void *), void *arg) {
         return NULL;
     }
 
+    
     task->id = ++current_id;
     task->name = name;
-    task->status = READY;
+    task->status = PRONTA;
     if(ctx_create(&task->context, entry, arg, stack, STACKSIZE) == ERROR){
         mem_free(stack);
         mem_free(task);
         return NULL;
     }
     task->task_pai = current_task;
+    task->vg_id = VALGRIND_STACK_REGISTER(task->context.stack, task->context.stack + STACKSIZE);
 
     return task;
 }
@@ -66,7 +68,10 @@ int task_destroy(struct task_t *task) {
     }
 
     task->task_pai = NULL;
-    task->status = DONE;
+    task->status = TERMINADA;
+    if (task->id)
+        free(task->context.stack);
+    VALGRIND_STACK_DEREGISTER (task->vg_id);
     free(task);
 
     return NOERROR;
@@ -88,13 +93,13 @@ int task_switch(struct task_t *task) {
     previous_task = current_task;
 
     if (previous_task)
-        previous_task->status = READY;
+        previous_task->status = SUSPENSA;
 
     current_task = task_switch;
     if (current_task)
-        current_task->status = EXECUTING;
+        current_task->status = RODANDO;
 
-    if (ctx_swap(&previous_task->context, &task_switch->context) == ERROR)
+    if (ctx_swap(previous_task ? &previous_task->context : NULL, task_switch ? &task_switch->context : NULL) == ERROR)
         return ERROR;
 
     return NOERROR;

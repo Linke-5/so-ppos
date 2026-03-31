@@ -13,8 +13,9 @@
 
 void user_main(void *arg);
 
+
+
 void dispatcher_init() {
-    task_init();
 }
 
 void dispatcher() {
@@ -22,5 +23,6 @@ void dispatcher() {
 
     task_user = task_create("user", user_main, 0);
     task_switch(task_user);
+    task_destroy(task_user->task_pai);
     task_destroy(task_user);
 }
