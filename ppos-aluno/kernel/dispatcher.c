@@ -9,13 +9,16 @@
 
 #include <stdio.h>
 
+#include "../lib/queue.h"
+#include "scheduler.h"
 #include "task.h"
 
-void user_main(void *arg);
+extern void user_main(void *arg);
 
-
+struct queue_t * ready_queue;
 
 void dispatcher_init() {
+    ready_queue = queue_create();
 }
 
 void dispatcher() {
